@@ -1,0 +1,35 @@
+use crate::domain::user::user::ModelEx as UserModel;
+use chrono::{NaiveDate, NaiveDateTime};
+use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
+
+#[derive(Debug, Serialize, Deserialize, ToSchema, Clone)]
+pub struct UserSerializer {
+    pub avatar: Option<String>,
+    pub first_name: String,
+    pub last_name: String,
+    pub username: String,
+    pub email: String,
+    pub password: Option<String>,
+    pub birth_of_date: Option<NaiveDate>,
+    pub phone_number: Option<String>,
+    pub created_at: Option<NaiveDateTime>,
+    pub deleted_at: Option<NaiveDateTime>,
+}
+
+impl From<UserModel> for UserSerializer {
+    fn from(value: UserModel) -> Self {
+        UserSerializer {
+            avatar: value.avatar,
+            first_name: value.first_name,
+            last_name: value.last_name,
+            username: value.username,
+            email: value.email,
+            password: value.password,
+            birth_of_date: value.birth_of_date,
+            phone_number: value.phone_number,
+            created_at: value.created_at,
+            deleted_at: value.deleted_at,
+        }
+    }
+}
