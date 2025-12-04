@@ -95,6 +95,7 @@ websocket = "0.27.1"
 
 # --- 🌍 HTTP Client ---
 reqwest = { version = "0.12.9", features = ["json"] }
+axum-reverse-proxy = "1.0.3"
 rand = "0.8.5"
 sea-query = "0.32.3"
 regex = "1.11.1"

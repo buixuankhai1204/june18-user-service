@@ -7,6 +7,7 @@ use crate::infrastructure::third_party::redis::types::RedisSettings;
 use crate::application::user::user_service::UserService;
 use crate::application::authen::authen_service::AuthenService;
 use crate::application::address::address_service::AddressService;
+use crate::infrastructure::gateway::service_registry::ServiceRegistry;
 
 use rdkafka::producer::FutureProducer;
 use std::sync::Arc;
@@ -20,6 +21,7 @@ pub struct AppState {
     pub user_service: Arc<UserService>,
     pub authen_service: Arc<AuthenService>,
     pub address_service: Arc<AddressService>,
+    pub gateway_registry: Arc<ServiceRegistry>,
 }
 
 impl AppState {
@@ -39,6 +41,7 @@ impl AppState {
             Arc::new(UserService::new(redis.clone(), kafka_producer.clone()));
         let address_service =
             Arc::new(AddressService::new(redis.clone(), kafka_producer.clone()));
+        let gateway_registry = Arc::new(ServiceRegistry::with_defaults().await);
 
         Ok(Self {
             config,
@@ -48,6 +51,7 @@ impl AppState {
             kafka_producer,
             user_service,
             address_service,
+            gateway_registry,
         })
     }
 }

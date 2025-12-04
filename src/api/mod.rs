@@ -1,5 +1,10 @@
 use axum::http::{StatusCode, Uri};
+use axum::routing::{any, get};
 use crate::core::app_state::AppState;
+use crate::infrastructure::gateway::routes::{
+    gateway_health_check, list_services, proxy_to_product_service, proxy_to_order_service,
+    proxy_to_inventory_service, proxy_to_notification_service,
+};
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
 pub mod domain;
@@ -27,10 +32,19 @@ pub fn build_routes() -> OpenApiRouter<AppState> {
         .routes(routes!(domain::address::address::controller_get_addresses_by_user_id))
         .routes(routes!(domain::address::address::controller_delete_address));
 
+    let gateway_routes = OpenApiRouter::new()
+        .route("/gateway/health", get(gateway_health_check))
+        .route("/gateway/services", get(list_services))
+        .route("/gateway/product-service/{*path}", any(proxy_to_product_service))
+        .route("/gateway/order-service/{*path}", any(proxy_to_order_service))
+        .route("/gateway/inventory-service/{*path}", any(proxy_to_inventory_service))
+        .route("/gateway/notification-service/{*path}", any(proxy_to_notification_service));
+
     OpenApiRouter::new()
         .merge(auth_routes)
         .merge(user_routes)
         .merge(address_routes)
+        .merge(gateway_routes)
         .merge(server_routes)
         .fallback(handler_404)
 }
